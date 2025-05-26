@@ -111,7 +111,7 @@ jobs:
             else
               IFS='.' read -r MAJOR MINOR PATCH <<< "${LATEST_TAG#v}"
               PATCH=$((PATCH + 1))
-              NEW_VERSION="v$MAJOR.$MINOR.$PATCH"
+              NEW_VERSION="$MAJOR.$MINOR.$PATCH"
               echo "Bumped version: $LATEST_TAG -> $NEW_VERSION"
             fi
           fi
@@ -122,8 +122,8 @@ jobs:
       - name: Create GitHub release
         uses: ncipollo/release-action@v1
         with:
-          tag: ${{ steps.version.outputs.version }}
-          name: Release ${{ steps.version.outputs.version }}
+          tag: v${{ steps.version.outputs.version }}
+          name: Release v${{ steps.version.outputs.version }}
           artifacts: "models/*"
           allowUpdates: true
 
