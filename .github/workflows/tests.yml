@@ -98,7 +98,7 @@ jobs:
       - name: Determine version
         id: version
         run: |
-          if "$GITHUB_REF" == refs/tags/v* ]]; then
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
             # Use the tag directly
             NEW_VERSION="${GITHUB_REF#refs/tags/v}"
             echo "Using pushed version tag: $NEW_VERSION"
