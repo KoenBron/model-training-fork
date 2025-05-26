@@ -1,6 +1,6 @@
 # model-training
 <!-- COVERAGE_BADGE -->
-![Pylint](https://img.shields.io/badge/Pylint-9.80-blue) ![Coverage](https://img.shields.io/badge/Coverage-00%25-yellow)
+![Pylint](https://img.shields.io/badge/Pylint-9.80-blue) ![Coverage](https://img.shields.io/badge/Coverage-73%25-yellow)
 !
 <!-- PYLINT_BADGE -->
 
@@ -11,7 +11,7 @@ This repository trains a Restaurant Review Sentiment Analysis model using the Na
 
 ## 1. Clone the Repository# model-training
 <!-- COVERAGE_BADGE -->
-![Pylint](https://img.shields.io/badge/Pylint-9.80-blue) ![Coverage](https://img.shields.io/badge/Coverage-00%25-yellow)
+![Pylint](https://img.shields.io/badge/Pylint-9.80-blue) ![Coverage](https://img.shields.io/badge/Coverage-73%25-yellow)
 !
 <!-- PYLINT_BADGE -->
 
