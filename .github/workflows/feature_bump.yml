@@ -65,4 +65,4 @@ jobs:
 
       - name: Show result
         run: |
-          echo "📌 Tag pushed: ${{ steps.version.outputs.tag }}"
+          echo "Tag pushed: ${{ steps.version.outputs.tag }}"
