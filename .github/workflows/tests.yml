@@ -32,7 +32,7 @@ jobs:
 
     - name: Parse Pylint score and update README badge
       run: |
-        PYLINT_SCORE = $(grep "Your code has been rated at" pylint.log | awk '{print $7}' | cut -d'/' -f1)
+        PYLINT_SCORE=$(grep "Your code has been rated at" pylint.log | awk '{print $7}' | cut -d'/' -f1)
         sed -i "s/!\[Pylint\](https:\/\/img\.shields\.io\/badge\/Pylint-[0-9.]*-[a-z]*)/![Pylint](https:\/\/img.shields.io\/badge\/Pylint-${PYLINT_SCORE}-blue)/" README.md
 
     
