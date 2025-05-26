@@ -85,59 +85,75 @@ jobs:
     outputs:
       version: ${{ steps.set.outputs.version }}
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Check for given release
-        id: set
+      - name: Set up Git
         run: |
-          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
-            echo "CUSTOM_TAG=$NEW_VERSION" >> $GITHUB_ENV
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Determine version
+        id: version
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+
+          if [[ "$TAG" == v*]]; then
+            # Use the tag directly
+            NEW_VERSION="$TAG"
+            echo "Using pushed version tag: $NEW_VERSION"
+          else if [[ "$TAG" == "release"]]
+            # Bump patch version from latest stable vX.Y.Z tag
+            LATEST_TAG=$(git tag --sort=-v:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | head -n 1)
+            if [[ -z "$LATEST_TAG" ]]; then
+              echo "No existing version tag found, defaulting to v0.0.1"
+              NEW_VERSION="v0.0.1"
+            else
+              IFS='.' read -r MAJOR MINOR PATCH <<< "${LATEST_TAG#v}"
+              PATCH=$((PATCH + 1))
+              NEW_VERSION="v$MAJOR.$MINOR.$PATCH"
+              echo "Bumped version: $LATEST_TAG -> $NEW_VERSION"
+            fi
           fi
 
-      - name: Bump version and create tag
-        id: tag_version
-        uses: mathieudutour/github-tag-action@v6.2
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          fetch_all_tags: true
-          default_bump: patch
-          custom_tag: ${{ env.CUSTOM_TAG }}
-          release_branches: main,master
-          tag_prefix: v
+          echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+
+      - name: Remove pushed tag
+        if: ${{ github.ref == 'refs/tags/release' }}
+        run: |
+          git checkout -b main
+
+           # Remove the pushed tags
+          if [[ "$GITHUB_REF" == "refs/tags/release" ]]; then
+            git tag -d release
+            git push origin :release
+          else
+            git tag -d v${{ steps.version.outputs.version }}
+            git push origin :v${{ steps.version.outputs.version }}
+          fi
 
       - name: Create GitHub release
         uses: ncipollo/release-action@v1
         with:
-          tag: ${{ steps.tag_version.outputs.new_tag }}
-          name: Release ${{ steps.tag_version.outputs.new_tag }}
-          body: ${{ steps.tag_version.outputs.changelog }}
+          tag: ${{ steps.version.outputs.version }}
+          name: Release ${{ steps.version.outputs.version }}
           artifacts: "models/*"
 
       - name: Bump patch and add pre tag
         id: prerelease
         if: github.ref == 'refs/heads/main'
-        uses: mathieudutour/github-tag-action@v6.2
-        with:
-          dry_run: true
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          release_branches: '_NONE_'
-          pre_release_branches: main
-          default_prerelease_bump: prerelease
-          append_to_pre_release_tag: pre        
-          tag_prefix: v
-          default_bump: patch
-
-      - name: Bump to next pre-release version
-        if: github.ref == 'refs/heads/main'
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          IFS='.' read -r MAJOR MINOR PATCH <<< "${{ steps.version.outputs.version }}"
+          PATCH=$((PATCH + 1))
+          PRE_VERSION="v$MAJOR.$MINOR.$PATCH-pre"
+
           git checkout main
           git pull origin main
 
-          PRE_VERSION=${{ steps.prerelease.outputs.new_tag }}
-          echo "🚀 Creating empty commit for $PRE_VERSION"
+          echo "Creating empty commit for $PRE_VERSION"
           git commit --allow-empty -m "chore: bump version to $PRE_VERSION"
           git tag "$PRE_VERSION"
 
