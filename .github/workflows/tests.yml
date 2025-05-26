@@ -80,10 +80,10 @@ jobs:
 
   versioning: # Determine the new version
     needs: quality
-    if: ${{ startsWith(github.ref, 'refs/tags/v') || github.ref == 'refs/tags/release' }}
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ steps.set.outputs.version }}
+      version: ${{ steps.version.outputs.version }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -98,13 +98,11 @@ jobs:
       - name: Determine version
         id: version
         run: |
-          TAG="${GITHUB_REF#refs/tags/}"
-
-          if [[ "$TAG" == v*]]; then
+          if "$GITHUB_REF" == refs/tags/v* ]]; then
             # Use the tag directly
             NEW_VERSION="$TAG"
             echo "Using pushed version tag: $NEW_VERSION"
-          else if [[ "$TAG" == "release"]]
+          else
             # Bump patch version from latest stable vX.Y.Z tag
             LATEST_TAG=$(git tag --sort=-v:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | head -n 1)
             if [[ -z "$LATEST_TAG" ]]; then
@@ -120,31 +118,17 @@ jobs:
 
           echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
-
-      - name: Remove pushed tag
-        if: ${{ github.ref == 'refs/tags/release' }}
-        run: |
-          git checkout -b main
-
-           # Remove the pushed tags
-          if [[ "$GITHUB_REF" == "refs/tags/release" ]]; then
-            git tag -d release
-            git push origin :release
-          else
-            git tag -d v${{ steps.version.outputs.version }}
-            git push origin :v${{ steps.version.outputs.version }}
-          fi
-
+          
       - name: Create GitHub release
         uses: ncipollo/release-action@v1
         with:
           tag: ${{ steps.version.outputs.version }}
           name: Release ${{ steps.version.outputs.version }}
           artifacts: "models/*"
+          allowUpdates: true
 
       - name: Bump patch and add pre tag
         id: prerelease
-        if: github.ref == 'refs/heads/main'
         run: |
           IFS='.' read -r MAJOR MINOR PATCH <<< "${{ steps.version.outputs.version }}"
           PATCH=$((PATCH + 1))

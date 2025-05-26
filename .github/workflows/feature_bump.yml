@@ -34,7 +34,7 @@ jobs:
           BASE_TAG=$(git tag --sort=-creatordate | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+-pre$' | head -n 1)
           echo "Base pre-release tag: $BASE_TAG"
           if [ -z "$BASE_TAG" ]; then
-            echo "❌ No base pre-release tag found (e.g., v1.2.3-pre)."
+            echo "No base pre-release tag found (e.g., v1.2.3-pre)."
             exit 1
           fi
           echo "base_tag=$BASE_TAG" >> $GITHUB_OUTPUT
