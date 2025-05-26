@@ -1,6 +1,6 @@
 # model-training
 <!-- COVERAGE_BADGE -->
-![Pylint](https://img.shields.io/badge/Pylint-0.0-blue) [Coverage](https://img.shields.io/badge/Coverage-00%25-yellow)
+![Pylint](https://img.shields.io/badge/Pylint-9.80-blue) [Coverage](https://img.shields.io/badge/Coverage-00%25-yellow)
 !
 <!-- PYLINT_BADGE -->
 
