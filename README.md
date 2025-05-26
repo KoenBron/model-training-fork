@@ -1,21 +1,6 @@
 # model-training
 <!-- COVERAGE_BADGE -->
-<<<<<<< HEAD
 ![Pylint](https://img.shields.io/badge/Pylint-0.0-blue) ![Coverage](https://img.shields.io/badge/Coverage-00%25-yellow)
-=======
-![Pylint](https://img.shields.io/badge/Pylint-9.80-blue) ![Coverage](https://img.shields.io/badge/Coverage-73%25-yellow)
-!
-<!-- PYLINT_BADGE -->
-
-
-This repository trains a Restaurant Review Sentiment Analysis model using the Naive Bayes classifier.
-
-# Project Setup
-
-## 1. Clone the Repository# model-training
-<!-- COVERAGE_BADGE -->
-![Pylint](https://img.shields.io/badge/Pylint-9.80-blue) ![Coverage](https://img.shields.io/badge/Coverage-73%25-yellow)
->>>>>>> c9b1fbb06edd86781e21271c1d83ba5f2040bb62
 !
 <!-- PYLINT_BADGE -->
 

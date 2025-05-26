@@ -35,7 +35,8 @@ jobs:
       run: |
         PYLINT_SCORE=$(grep "Your code has been rated at" pylint.log | awk '{print $7}' | cut -d'/' -f1)
         sed -i "s/!\[Pylint\](https:\/\/img\.shields\.io\/badge\/Pylint-[0-9.]*-[a-z]*)/![Pylint](https:\/\/img.shields.io\/badge\/Pylint-${PYLINT_SCORE}-blue)/" README.md
-
+        echo "## Pylint Score" >> $GITHUB_STEP_SUMMARY
+        echo "Coverage: ${PYLINT_SCORE}%" >> $GITHUB_STEP_SUMMARY
     
     - name: Run flake8
       run: flake8 restaurant_model_training/ --count --select=E9,F63,F7,F82 --show-source --statistics
